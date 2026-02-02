@@ -31,8 +31,8 @@ fn eval_expressions(expressions: Vec<String>, stack: &mut Stack) {
         match e.as_str() {
             "+" => output.append(&mut eval_add_op(stack)),
             "-" => output.append(&mut eval_sub_op(stack)),
-            "/" => stack.push(OperatorType::Div),
-            "*" => stack.push(OperatorType::Multi),
+            "/" => output.append(&mut eval_div_op(stack)),
+            "*" => output.append(&mut eval_multi_op(stack)),
             "(" => stack.push(OperatorType::LeftParent),
             ")" => output.append(&mut stack.close_parenthesis()),
             _ => {
@@ -135,6 +135,92 @@ fn eval_sub_op(stack: &mut Stack) -> Vec<String> {
         },
         OperatorType::LeftParent => {
             stack.push(OperatorType::Sub);
+            
+            return buffer;
+        },
+        _ => {
+            println!("This shouldn't be occurs!");
+            process::exit(1);
+        },
+    }
+}
+
+fn eval_div_op(stack: &mut Stack) -> Vec<String> {
+    let mut buffer: Vec<String> = Vec::new();
+    
+    if stack.is_empty() {
+        stack.push(OperatorType::Div);
+        return buffer
+    }
+    
+    match stack.top() {
+        OperatorType::Add => {
+            stack.push(OperatorType::Div);
+            return buffer;
+        },
+        OperatorType::Sub => {
+            stack.push(OperatorType::Div);
+            return buffer;
+        },
+        OperatorType::Div => {
+            stack.pop_and_discard();
+            stack.push(OperatorType::Div);
+            buffer.push(String::from("/"));
+            
+            return buffer;
+        },
+        OperatorType::Multi => {
+            stack.pop_and_discard();
+            stack.push(OperatorType::Div);
+            buffer.push(String::from("*")); 
+            
+            return buffer;
+        },
+        OperatorType::LeftParent => {
+            stack.push(OperatorType::Div);
+            
+            return buffer;
+        },
+        _ => {
+            println!("This shouldn't be occurs!");
+            process::exit(1);
+        },
+    }
+}
+
+fn eval_multi_op(stack: &mut Stack) -> Vec<String> {
+    let mut buffer: Vec<String> = Vec::new();
+    
+    if stack.is_empty() {
+        stack.push(OperatorType::Multi);
+        return buffer
+    }
+    
+    match stack.top() {
+        OperatorType::Add => {
+            stack.push(OperatorType::Multi);
+            return buffer;
+        },
+        OperatorType::Sub => {
+            stack.push(OperatorType::Multi);
+            return buffer;
+        },
+        OperatorType::Div => {
+            stack.pop_and_discard();
+            stack.push(OperatorType::Multi);
+            buffer.push(String::from("/"));
+            
+            return buffer;
+        },
+        OperatorType::Multi => {
+            stack.pop_and_discard();
+            stack.push(OperatorType::Multi);
+            buffer.push(String::from("*")); 
+            
+            return buffer;
+        },
+        OperatorType::LeftParent => {
+            stack.push(OperatorType::Multi);
             
             return buffer;
         },

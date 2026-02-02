@@ -2,7 +2,6 @@ use std::process;
 
 #[derive(Copy, Clone, Debug)]
 pub enum OperatorType {
-    RightParent,
     LeftParent,
     Multi,
     Add,
