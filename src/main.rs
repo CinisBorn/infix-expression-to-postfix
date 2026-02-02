@@ -27,10 +27,10 @@ fn eval_expressions(expressions: Vec<String>, stack: &mut Stack) {
     
     for e in expressions {
         match e.as_str() {
-            "+" => output.append(&mut eval_add_op(stack)),
-            "-" => output.append(&mut eval_sub_op(stack)),
-            "/" => output.append(&mut eval_div_op(stack)),
-            "*" => output.append(&mut eval_multi_op(stack)),
+            "+" => output.append(&mut eval_operator(stack, Operator::Add)),
+            "-" => output.append(&mut eval_operator(stack, Operator::Sub)),
+            "/" => output.append(&mut eval_operator(stack, Operator::Div)),
+            "*" => output.append(&mut eval_operator(stack, Operator::Multi)),
             "(" => stack.push(Operator::LeftParent),
             ")" => output.append(&mut stack.close_parenthesis()),
             _ => {
@@ -39,176 +39,46 @@ fn eval_expressions(expressions: Vec<String>, stack: &mut Stack) {
         }
     }
     
-    
     output.append(&mut stack.dry());
     println!("{:?}", output);
     println!("{:?}", stack);
 }
 
-fn eval_add_op(stack: &mut Stack) -> Vec<String> {
-    let mut buffer: Vec<String> = Vec::new();
-    
-    if stack.is_empty() {
-        stack.push(Operator::Add);
-        return buffer
-    }
-    
-    match stack.top() {
-        Operator::Add => {
-            stack.pop_and_discard();
-            stack.push(Operator::Add);
-            buffer.push(String::from("+"));
-            
-            return buffer;
-        },
-        Operator::Sub => {
-            stack.pop_and_discard();
-            stack.push(Operator::Add);
-            buffer.push(String::from("-"));
-            
-            return buffer;
-        },
-        Operator::Div => {
-            stack.pop_and_discard();
-            stack.push(Operator::Add);
-            buffer.push(String::from("/"));
-            
-            return buffer;
-        },
-        Operator::Multi => {
-            stack.pop_and_discard();
-            stack.push(Operator::Add);
-            buffer.push(String::from("*")); 
-            
-            return buffer;
-        },
-        Operator::LeftParent => {
-            stack.push(Operator::Add);
-            
-            return buffer;
-        },
+fn precedence(operator: &Operator) -> u8 {
+    match operator {
+        Operator::Add | Operator::Sub => 0,
+        Operator::Multi | Operator::Div => 1,
+        Operator::LeftParent => 2,
     }
 }
 
-fn eval_sub_op(stack: &mut Stack) -> Vec<String> {
+fn eval_operator(stack: &mut Stack, incoming: Operator) -> Vec<String> {
     let mut buffer: Vec<String> = Vec::new();
     
     if stack.is_empty() {
-        stack.push(Operator::Sub);
+        stack.push(incoming);
         return buffer
-    }
+    };
     
-    match stack.top() {
-        Operator::Add => {
-            stack.pop_and_discard();
-            stack.push(Operator::Sub);
-            buffer.push(String::from("+"));
-            
-            return buffer;
-        },
-        Operator::Sub => {
-            stack.pop_and_discard();
-            stack.push(Operator::Sub);
-            buffer.push(String::from("-"));
-            
-            return buffer;
-        },
-        Operator::Div => {
-            stack.pop_and_discard();
-            stack.push(Operator::Sub);
-            buffer.push(String::from("/"));
-            
-            return buffer;
-        },
-        Operator::Multi => {
-            stack.pop_and_discard();
-            stack.push(Operator::Sub);
-            buffer.push(String::from("*")); 
-            
-            return buffer;
-        },
-        Operator::LeftParent => {
-            stack.push(Operator::Sub);
-            
-            return buffer;
-        },
-    }
+    let stack_top = stack.top();
+    
+    if let Operator::LeftParent = stack_top {
+        stack.push(incoming);
+        return buffer;
+    };
+    
+    if should_pop_operator(stack_top, &incoming) {
+        let operator = stack.pop();
+        buffer.push(Stack::operator_to_string(&operator));
+        stack.push(incoming);
+        
+        return buffer;
+    } else {
+        stack.push(incoming);
+        return buffer;
+    };
 }
 
-fn eval_div_op(stack: &mut Stack) -> Vec<String> {
-    let mut buffer: Vec<String> = Vec::new();
-    
-    if stack.is_empty() {
-        stack.push(Operator::Div);
-        return buffer
-    }
-    
-    match stack.top() {
-        Operator::Add => {
-            stack.push(Operator::Div);
-            return buffer;
-        },
-        Operator::Sub => {
-            stack.push(Operator::Div);
-            return buffer;
-        },
-        Operator::Div => {
-            stack.pop_and_discard();
-            stack.push(Operator::Div);
-            buffer.push(String::from("/"));
-            
-            return buffer;
-        },
-        Operator::Multi => {
-            stack.pop_and_discard();
-            stack.push(Operator::Div);
-            buffer.push(String::from("*")); 
-            
-            return buffer;
-        },
-        Operator::LeftParent => {
-            stack.push(Operator::Div);
-            
-            return buffer;
-        }
-    }
-}
-
-fn eval_multi_op(stack: &mut Stack) -> Vec<String> {
-    let mut buffer: Vec<String> = Vec::new();
-    
-    if stack.is_empty() {
-        stack.push(Operator::Multi);
-        return buffer
-    }
-    
-    match stack.top() {
-        Operator::Add => {
-            stack.push(Operator::Multi);
-            return buffer;
-        },
-        Operator::Sub => {
-            stack.push(Operator::Multi);
-            return buffer;
-        },
-        Operator::Div => {
-            stack.pop_and_discard();
-            stack.push(Operator::Multi);
-            buffer.push(String::from("/"));
-            
-            return buffer;
-        },
-        Operator::Multi => {
-            stack.pop_and_discard();
-            stack.push(Operator::Multi);
-            buffer.push(String::from("*")); 
-            
-            return buffer;
-        },
-        Operator::LeftParent => {
-            stack.push(Operator::Multi);
-            
-            return buffer;
-        },
-    }
+fn should_pop_operator(stack_top: &Operator, incoming: &Operator) -> bool {
+    precedence(incoming) <= precedence(stack_top)
 }

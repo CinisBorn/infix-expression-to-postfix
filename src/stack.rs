@@ -19,14 +19,20 @@ impl Stack {
         }
     }
     
+    pub fn operator_to_string(operator: &Operator) -> String {
+        match operator {
+            Operator::Add => String::from("+"),
+            Operator::Sub => String::from("-"),
+            Operator::Div => String::from("/"),
+            Operator::Multi => String::from("*"),
+            Operator::LeftParent => String::from("("),
+        }
+    }
+    
     pub fn top(&self) -> &Operator {
         self.stack.last().expect("Return last item")
     }
-    
-    pub fn pop_and_discard(&mut self) {
-        self.stack.pop().expect("Remove last item");
-    }
-    
+     
     pub fn pop(&mut self) -> Operator {
         self.stack.pop().expect("Remove last item")
     }
