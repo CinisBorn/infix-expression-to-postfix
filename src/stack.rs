@@ -1,5 +1,3 @@
-use std::process;
-
 #[derive(Copy, Clone, Debug)]
 pub enum Operator {
     LeftParent,
@@ -73,10 +71,6 @@ impl Stack {
                 Operator::Div => output.push(String::from("/")),
                 Operator::Multi => output.push(String::from("*")),
                 Operator::LeftParent => break,
-                _ => {
-                    eprint!("It shouldn't be possible... report it as an issues");
-                    process::exit(1);
-                }
             }
         }
         

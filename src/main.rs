@@ -1,6 +1,4 @@
 use std::{io};
-use std::process;
-
 use crate::stack::{Operator, Stack};
 
 mod stack;
@@ -89,10 +87,6 @@ fn eval_add_op(stack: &mut Stack) -> Vec<String> {
             
             return buffer;
         },
-        _ => {
-            println!("This shouldn't be occurs!");
-            process::exit(1);
-        },
     }
 }
 
@@ -138,10 +132,6 @@ fn eval_sub_op(stack: &mut Stack) -> Vec<String> {
             
             return buffer;
         },
-        _ => {
-            println!("This shouldn't be occurs!");
-            process::exit(1);
-        },
     }
 }
 
@@ -180,11 +170,7 @@ fn eval_div_op(stack: &mut Stack) -> Vec<String> {
             stack.push(Operator::Div);
             
             return buffer;
-        },
-        _ => {
-            println!("This shouldn't be occurs!");
-            process::exit(1);
-        },
+        }
     }
 }
 
@@ -223,10 +209,6 @@ fn eval_multi_op(stack: &mut Stack) -> Vec<String> {
             stack.push(Operator::Multi);
             
             return buffer;
-        },
-        _ => {
-            println!("This shouldn't be occurs!");
-            process::exit(1);
         },
     }
 }
