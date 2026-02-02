@@ -47,7 +47,9 @@ fn eval_expressions(expressions: Vec<String>, stack: &mut Stack) {
         }
     }
     
+    output.append(&mut stack.dry());
     println!("{:?}", output);
+    println!("{:?}", stack);
 }
 
 fn eval_add_op(stack: &mut Stack) -> Vec<String> {
@@ -97,5 +99,4 @@ fn eval_add_op(stack: &mut Stack) -> Vec<String> {
             process::exit(1);
         },
     }
-
 }

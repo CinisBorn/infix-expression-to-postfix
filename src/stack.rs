@@ -1,4 +1,4 @@
-#[derive(Copy,Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum OperatorType {
     RightParent,
     LeftParent,
@@ -8,7 +8,7 @@ pub enum OperatorType {
     Div,
 }
 
-
+#[derive(Debug)]
 pub struct Stack {
     stack: Vec<OperatorType>,
 }
@@ -42,5 +42,23 @@ impl Stack {
     
     pub fn is_empty(&self) -> bool {
         self.stack.is_empty()
+    }
+    
+    pub fn dry(&mut self) -> Vec<String> {
+        let mut remains: Vec<String> = Vec::new();
+        
+        for _ in [0..self.len()] {
+            match self.pop() {
+                OperatorType::Add => remains.push(String::from("+")),
+                OperatorType::Sub => remains.push(String::from("-")),
+                OperatorType::Div => remains.push(String::from("/")),
+                OperatorType::Multi => remains.push(String::from("*")),
+                _ => {
+                    continue 
+                }
+            }
+        }
+        
+        remains
     }
 }
