@@ -29,13 +29,7 @@ fn eval_expressions(expressions: Vec<String>, stack: &mut Stack) {
     
     for e in expressions {
         match e.as_str() {
-            "+" => {
-                let buffer = eval_add_op(stack);
-                
-                for b in buffer {
-                    output.push(b)
-                }
-            },
+            "+" => output.append(&mut eval_add_op(stack)),
             "-" => output.append(&mut eval_sub_op(stack)),
             "/" => stack.push(OperatorType::Div),
             "*" => stack.push(OperatorType::Multi),
