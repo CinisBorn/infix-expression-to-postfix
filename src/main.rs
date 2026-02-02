@@ -40,12 +40,13 @@ fn eval_expressions(expressions: Vec<String>, stack: &mut Stack) {
             "/" => stack.push(OperatorType::Div),
             "*" => stack.push(OperatorType::Multi),
             "(" => stack.push(OperatorType::LeftParent),
-            ")" => stack.push(OperatorType::RightParent),
+            ")" => output.append(&mut stack.close_parenthesis()),
             _ => {
                 output.push(e);
             }
         }
     }
+    
     
     output.append(&mut stack.dry());
     println!("{:?}", output);

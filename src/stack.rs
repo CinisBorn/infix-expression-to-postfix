@@ -1,3 +1,5 @@
+use std::process;
+
 #[derive(Copy, Clone, Debug)]
 pub enum OperatorType {
     RightParent,
@@ -47,7 +49,7 @@ impl Stack {
     pub fn dry(&mut self) -> Vec<String> {
         let mut remains: Vec<String> = Vec::new();
         
-        for _ in [0..self.len()] {
+        for _ in 0..self.len() {
             match self.pop() {
                 OperatorType::Add => remains.push(String::from("+")),
                 OperatorType::Sub => remains.push(String::from("-")),
@@ -60,5 +62,25 @@ impl Stack {
         }
         
         remains
+    }
+    
+    pub fn close_parenthesis(&mut self) -> Vec<String> {
+        let mut output: Vec<String> = Vec::new();
+        
+        for _ in 0..self.len() {
+            match self.pop() {
+                OperatorType::Add => output.push(String::from("+")),
+                OperatorType::Sub => output.push(String::from("-")),
+                OperatorType::Div => output.push(String::from("/")),
+                OperatorType::Multi => output.push(String::from("*")),
+                OperatorType::LeftParent => break,
+                _ => {
+                    eprint!("It shouldn't be possible... report it as an issues");
+                    process::exit(1);
+                }
+            }
+        }
+        
+        output
     }
 }
