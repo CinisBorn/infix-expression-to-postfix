@@ -1,7 +1,7 @@
 use std::{io};
 use std::process;
 
-use crate::stack::{OperatorType, Stack};
+use crate::stack::{Operator, Stack};
 
 mod stack;
 
@@ -33,7 +33,7 @@ fn eval_expressions(expressions: Vec<String>, stack: &mut Stack) {
             "-" => output.append(&mut eval_sub_op(stack)),
             "/" => output.append(&mut eval_div_op(stack)),
             "*" => output.append(&mut eval_multi_op(stack)),
-            "(" => stack.push(OperatorType::LeftParent),
+            "(" => stack.push(Operator::LeftParent),
             ")" => output.append(&mut stack.close_parenthesis()),
             _ => {
                 output.push(e);
@@ -51,41 +51,41 @@ fn eval_add_op(stack: &mut Stack) -> Vec<String> {
     let mut buffer: Vec<String> = Vec::new();
     
     if stack.is_empty() {
-        stack.push(OperatorType::Add);
+        stack.push(Operator::Add);
         return buffer
     }
     
     match stack.top() {
-        OperatorType::Add => {
+        Operator::Add => {
             stack.pop_and_discard();
-            stack.push(OperatorType::Add);
+            stack.push(Operator::Add);
             buffer.push(String::from("+"));
             
             return buffer;
         },
-        OperatorType::Sub => {
+        Operator::Sub => {
             stack.pop_and_discard();
-            stack.push(OperatorType::Add);
+            stack.push(Operator::Add);
             buffer.push(String::from("-"));
             
             return buffer;
         },
-        OperatorType::Div => {
+        Operator::Div => {
             stack.pop_and_discard();
-            stack.push(OperatorType::Add);
+            stack.push(Operator::Add);
             buffer.push(String::from("/"));
             
             return buffer;
         },
-        OperatorType::Multi => {
+        Operator::Multi => {
             stack.pop_and_discard();
-            stack.push(OperatorType::Add);
+            stack.push(Operator::Add);
             buffer.push(String::from("*")); 
             
             return buffer;
         },
-        OperatorType::LeftParent => {
-            stack.push(OperatorType::Add);
+        Operator::LeftParent => {
+            stack.push(Operator::Add);
             
             return buffer;
         },
@@ -100,41 +100,41 @@ fn eval_sub_op(stack: &mut Stack) -> Vec<String> {
     let mut buffer: Vec<String> = Vec::new();
     
     if stack.is_empty() {
-        stack.push(OperatorType::Sub);
+        stack.push(Operator::Sub);
         return buffer
     }
     
     match stack.top() {
-        OperatorType::Add => {
+        Operator::Add => {
             stack.pop_and_discard();
-            stack.push(OperatorType::Sub);
+            stack.push(Operator::Sub);
             buffer.push(String::from("+"));
             
             return buffer;
         },
-        OperatorType::Sub => {
+        Operator::Sub => {
             stack.pop_and_discard();
-            stack.push(OperatorType::Sub);
+            stack.push(Operator::Sub);
             buffer.push(String::from("-"));
             
             return buffer;
         },
-        OperatorType::Div => {
+        Operator::Div => {
             stack.pop_and_discard();
-            stack.push(OperatorType::Sub);
+            stack.push(Operator::Sub);
             buffer.push(String::from("/"));
             
             return buffer;
         },
-        OperatorType::Multi => {
+        Operator::Multi => {
             stack.pop_and_discard();
-            stack.push(OperatorType::Sub);
+            stack.push(Operator::Sub);
             buffer.push(String::from("*")); 
             
             return buffer;
         },
-        OperatorType::LeftParent => {
-            stack.push(OperatorType::Sub);
+        Operator::LeftParent => {
+            stack.push(Operator::Sub);
             
             return buffer;
         },
@@ -149,35 +149,35 @@ fn eval_div_op(stack: &mut Stack) -> Vec<String> {
     let mut buffer: Vec<String> = Vec::new();
     
     if stack.is_empty() {
-        stack.push(OperatorType::Div);
+        stack.push(Operator::Div);
         return buffer
     }
     
     match stack.top() {
-        OperatorType::Add => {
-            stack.push(OperatorType::Div);
+        Operator::Add => {
+            stack.push(Operator::Div);
             return buffer;
         },
-        OperatorType::Sub => {
-            stack.push(OperatorType::Div);
+        Operator::Sub => {
+            stack.push(Operator::Div);
             return buffer;
         },
-        OperatorType::Div => {
+        Operator::Div => {
             stack.pop_and_discard();
-            stack.push(OperatorType::Div);
+            stack.push(Operator::Div);
             buffer.push(String::from("/"));
             
             return buffer;
         },
-        OperatorType::Multi => {
+        Operator::Multi => {
             stack.pop_and_discard();
-            stack.push(OperatorType::Div);
+            stack.push(Operator::Div);
             buffer.push(String::from("*")); 
             
             return buffer;
         },
-        OperatorType::LeftParent => {
-            stack.push(OperatorType::Div);
+        Operator::LeftParent => {
+            stack.push(Operator::Div);
             
             return buffer;
         },
@@ -192,35 +192,35 @@ fn eval_multi_op(stack: &mut Stack) -> Vec<String> {
     let mut buffer: Vec<String> = Vec::new();
     
     if stack.is_empty() {
-        stack.push(OperatorType::Multi);
+        stack.push(Operator::Multi);
         return buffer
     }
     
     match stack.top() {
-        OperatorType::Add => {
-            stack.push(OperatorType::Multi);
+        Operator::Add => {
+            stack.push(Operator::Multi);
             return buffer;
         },
-        OperatorType::Sub => {
-            stack.push(OperatorType::Multi);
+        Operator::Sub => {
+            stack.push(Operator::Multi);
             return buffer;
         },
-        OperatorType::Div => {
+        Operator::Div => {
             stack.pop_and_discard();
-            stack.push(OperatorType::Multi);
+            stack.push(Operator::Multi);
             buffer.push(String::from("/"));
             
             return buffer;
         },
-        OperatorType::Multi => {
+        Operator::Multi => {
             stack.pop_and_discard();
-            stack.push(OperatorType::Multi);
+            stack.push(Operator::Multi);
             buffer.push(String::from("*")); 
             
             return buffer;
         },
-        OperatorType::LeftParent => {
-            stack.push(OperatorType::Multi);
+        Operator::LeftParent => {
+            stack.push(Operator::Multi);
             
             return buffer;
         },

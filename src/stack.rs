@@ -1,7 +1,7 @@
 use std::process;
 
 #[derive(Copy, Clone, Debug)]
-pub enum OperatorType {
+pub enum Operator {
     LeftParent,
     Multi,
     Add,
@@ -11,7 +11,7 @@ pub enum OperatorType {
 
 #[derive(Debug)]
 pub struct Stack {
-    stack: Vec<OperatorType>,
+    stack: Vec<Operator>,
 }
 
 impl Stack {
@@ -21,7 +21,7 @@ impl Stack {
         }
     }
     
-    pub fn top(&self) -> &OperatorType {
+    pub fn top(&self) -> &Operator {
         self.stack.last().expect("Return last item")
     }
     
@@ -29,11 +29,11 @@ impl Stack {
         self.stack.pop().expect("Remove last item");
     }
     
-    pub fn pop(&mut self) -> OperatorType {
+    pub fn pop(&mut self) -> Operator {
         self.stack.pop().expect("Remove last item")
     }
     
-    pub fn push(&mut self, value: OperatorType) {
+    pub fn push(&mut self, value: Operator) {
         self.stack.push(value);
     }
     
@@ -50,10 +50,10 @@ impl Stack {
         
         for _ in 0..self.len() {
             match self.pop() {
-                OperatorType::Add => remains.push(String::from("+")),
-                OperatorType::Sub => remains.push(String::from("-")),
-                OperatorType::Div => remains.push(String::from("/")),
-                OperatorType::Multi => remains.push(String::from("*")),
+                Operator::Add => remains.push(String::from("+")),
+                Operator::Sub => remains.push(String::from("-")),
+                Operator::Div => remains.push(String::from("/")),
+                Operator::Multi => remains.push(String::from("*")),
                 _ => {
                     continue 
                 }
@@ -68,11 +68,11 @@ impl Stack {
         
         for _ in 0..self.len() {
             match self.pop() {
-                OperatorType::Add => output.push(String::from("+")),
-                OperatorType::Sub => output.push(String::from("-")),
-                OperatorType::Div => output.push(String::from("/")),
-                OperatorType::Multi => output.push(String::from("*")),
-                OperatorType::LeftParent => break,
+                Operator::Add => output.push(String::from("+")),
+                Operator::Sub => output.push(String::from("-")),
+                Operator::Div => output.push(String::from("/")),
+                Operator::Multi => output.push(String::from("*")),
+                Operator::LeftParent => break,
                 _ => {
                     eprint!("It shouldn't be possible... report it as an issues");
                     process::exit(1);
