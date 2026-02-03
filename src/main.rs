@@ -82,3 +82,53 @@ fn eval_operator(stack: &mut Stack, incoming: Operator) -> Vec<String> {
 fn should_pop_operator(stack_top: &Operator, incoming: &Operator) -> bool {
     precedence(incoming) <= precedence(stack_top)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn is_popped() {
+        let sum = Operator::Add;
+        let sub = Operator::Sub;
+        let div = Operator::Div;
+        let multi = Operator::Multi;
+        
+        assert_eq!(true, should_pop_operator(&sum, &sum));
+        assert_eq!(true, should_pop_operator(&sum, &sub));
+        assert_eq!(true, should_pop_operator(&sub, &sum));
+        assert_eq!(true, should_pop_operator(&sub, &sub));
+        assert_eq!(true, should_pop_operator(&div, &div));
+        assert_eq!(true, should_pop_operator(&div, &multi));
+        assert_eq!(true, should_pop_operator(&multi, &div));
+        assert_eq!(true, should_pop_operator(&multi, &multi));
+    }
+    
+    #[test]
+    fn is_not_popped() {
+        let sum = Operator::Add;
+        let sub = Operator::Sub;
+        let div = Operator::Div;
+        let multi = Operator::Multi;
+        
+        assert_eq!(false, should_pop_operator(&sum, &div));
+        assert_eq!(false, should_pop_operator(&sub, &div));
+        assert_eq!(false, should_pop_operator(&sum, &multi));
+        assert_eq!(false, should_pop_operator(&sub, &multi));
+    }
+    
+    #[test]
+    fn set_operators_precedence() {
+        let sum = Operator::Add;
+        let sub = Operator::Sub;
+        let div = Operator::Div;
+        let multi = Operator::Multi;
+        let left_parent = Operator::LeftParent;
+        
+        assert_eq!(0, precedence(&sum));
+        assert_eq!(0, precedence(&sub));
+        assert_eq!(1, precedence(&div));
+        assert_eq!(1, precedence(&multi));
+        assert_eq!(2, precedence(&left_parent));
+    }
+}
